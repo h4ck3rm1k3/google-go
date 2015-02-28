@@ -118,13 +118,13 @@ if [ ! -x "$GOROOT_BOOTSTRAP/bin/go" ]; then
 	echo "Set \$GOROOT_BOOTSTRAP to a working Go tree >= Go 1.4." >&2
 fi
 rm -f cmd/dist/dist
-GOROOT="$GOROOT_BOOTSTRAP" GOOS="" GOARCH="" "$GOROOT_BOOTSTRAP/bin/go" build -o cmd/dist/dist ./cmd/dist
+#GOROOT="$GOROOT_BOOTSTRAP" GOOS="" GOARCH="" "$GOROOT_BOOTSTRAP/bin/go" build -o cmd/dist/dist ./cmd/dist
 
 # -e doesn't propagate out of eval, so check success by hand.
-eval $(./cmd/dist/dist env -p || echo FAIL=true)
-if [ "$FAIL" = true ]; then
-	exit 1
-fi
+#eval $(./cmd/dist/dist env -p || echo FAIL=true)
+#if [ "$FAIL" = true ]; then
+#	exit 1
+#fi
 
 echo
 
@@ -143,7 +143,8 @@ if [ "$1" = "--no-clean" ]; then
 	buildall=""
 	shift
 fi
-./cmd/dist/dist bootstrap $buildall $GO_DISTFLAGS -v # builds go_bootstrap
+echo ./dist.6 bootstrap $buildall $GO_DISTFLAGS -v # builds go_bootstrap
+./dist.6 bootstrap $buildall $GO_DISTFLAGS -v # builds go_bootstrap
 # Delay move of dist tool to now, because bootstrap may clear tool directory.
 mv cmd/dist/dist "$GOTOOLDIR"/dist
 echo

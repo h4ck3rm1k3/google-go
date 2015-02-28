@@ -4,6 +4,37 @@ sys.path.append('/mnt/data/home/mdupont/experiments/scons-go-tools/')
 
 env = Environment(TOOLS=['default', 'go'])
 
+# env.GoProgram('objx86', env.Go('objx86', [
+#     'cmd/internal/obj/x86/6.out.go',
+#     'cmd/internal/obj/x86/anames6.go','cmd/internal/obj/x86/asm6.go','cmd/internal/obj/x86/list6.go','cmd/internal/obj/x86/obj6.go','cmd/internal/obj/x86/util.go'
+# ]))
+
+env.GoProgram('obj', env.Go('obj', [
+
+    'cmd/internal/obj/ar.go',
+    'cmd/internal/obj/data.go',
+    'cmd/internal/obj/flag.go',
+    'cmd/internal/obj/fmt.go',
+
+    #'cmd/internal/obj/arm/5.out.go','cmd/internal/obj/arm/anames5.go','cmd/internal/obj/arm/asm5.go','cmd/internal/obj/arm/list5.go','cmd/internal/obj/arm/obj5.go','cmd/internal/obj/arm/util.go',
+
+    'cmd/internal/obj/funcdata.go','cmd/internal/obj/go.go',
+         #'cmd/internal/obj/i386/8.out.go','cmd/internal/obj/i386/anames8.go','cmd/internal/obj/i386/asm8.go','cmd/internal/obj/i386/list8.go','cmd/internal/obj/i386/obj8.go','cmd/internal/obj/i386/util.go',
+         'cmd/internal/obj/ld.go',
+         'cmd/internal/obj/libc.go',
+         'cmd/internal/obj/link.go',
+         'cmd/internal/obj/mgc0.go',
+         'cmd/internal/obj/obj.go',
+         'cmd/internal/obj/objfile.go',
+         'cmd/internal/obj/pass.go',
+         'cmd/internal/obj/pcln.go',
+         #'cmd/internal/obj/ppc64/9.out.go','cmd/internal/obj/ppc64/anames9.go','cmd/internal/obj/ppc64/asm9.go','cmd/internal/obj/ppc64/list9.go','cmd/internal/obj/ppc64/obj9.go','cmd/internal/obj/ppc64/util.go',
+         'cmd/internal/obj/stack.go',
+         'cmd/internal/obj/sym.go',
+         'cmd/internal/obj/textflag.go','cmd/internal/obj/typekind.go','cmd/internal/obj/util.go']))
+
+#    'cmd/dist/buildruntime.go',
+
 env.GoProgram('dist', env.Go('dist', [
       'cmd/dist/build.go',
       'cmd/dist/buildgo.go',    
@@ -14,20 +45,30 @@ env.GoProgram('dist', env.Go('dist', [
       'cmd/dist/util.go',
       ]))
 
-
 env.GoProgram('build', env.Go('build', [
-                       'go/build/build.go',
-                       'go/build/doc.go',
-                       'go/build/read.go',
-                       'go/build/syslist.go',
+    'go/build/build.go',
+    'go/build/doc.go',
+    'go/build/read.go',
+    'go/build/syslist.go',   
+]))
 
-                       ]))
+#'go/build/read_test.go',
+#'go/build/build_test.go',
+#'go/build/deps_test.go',
+#'go/build/syslist_test.go',
+#'go/build/testdata/multi/file.go',
+#'go/build/testdata/multi/file_appengine.go',
+#'go/build/testdata/other/file/file.go',
+#'go/build/testdata/other/main.go'
 
-                       #'go/build/read_test.go',
-                       #'go/build/build_test.go',
-                       #'go/build/deps_test.go',
-                       #'go/build/syslist_test.go',
-                       #'go/build/testdata/multi/file.go',
-                       #'go/build/testdata/multi/file_appengine.go',
-                       #'go/build/testdata/other/file/file.go',
-                       #'go/build/testdata/other/main.go'
+
+# env.GoProgram('6g', env.Go('6g', [
+#     'cmd/6g/cgen.go',
+#     'cmd/6g/galign.go',
+#     'cmd/6g/gg.go',
+#     'cmd/6g/ggen.go',
+#     'cmd/6g/gsubr.go',
+#     'cmd/6g/peep.go',
+#     'cmd/6g/prog.go',
+#     'cmd/6g/reg.go',
+#     'cmd/6g/util.go']))

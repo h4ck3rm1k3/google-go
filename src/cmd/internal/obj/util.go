@@ -212,26 +212,32 @@ func envOr(key, value string) string {
 }
 
 func Getgoroot() string {
+	const defaultGOROOT=""
 	return envOr("GOROOT", defaultGOROOT)
 }
 
 func Getgoarch() string {
+	const defaultGOARCH="";
 	return envOr("GOARCH", defaultGOARCH)
 }
 
 func Getgoos() string {
+	const defaultGOOS ="";
 	return envOr("GOOS", defaultGOOS)
 }
 
 func Getgoarm() string {
+	const defaultGOARM="";
 	return envOr("GOARM", defaultGOARM)
 }
 
 func Getgo386() string {
+	const defaultGO386 ="";
 	return envOr("GO386", defaultGO386)
 }
 
 func Getgoversion() string {
+	const version = "0.0.0.1"
 	return version
 }
 

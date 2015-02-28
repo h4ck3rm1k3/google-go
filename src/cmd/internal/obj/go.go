@@ -50,6 +50,7 @@ func addexp(s string) {
 }
 
 func linksetexp() {
+	const goexperiment="";
 	for _, f := range strings.Split(goexperiment, ",") {
 		if f != "" {
 			addexp(f)

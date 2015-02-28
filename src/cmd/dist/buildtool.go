@@ -68,6 +68,7 @@ func bootstrapBuildTools() {
 	for _, dir := range bootstrapDirs {
 		src := pathf("%s/src/cmd/%s", goroot, dir)
 		dst := pathf("%s/%s", base, dir)
+		xprintf(dst)
 		xmkdirall(dst)
 		for _, name := range xreaddirfiles(src) {
 			srcFile := pathf("%s/%s", src, name)
