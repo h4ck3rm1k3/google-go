@@ -1,0 +1,33 @@
+import sys
+sys.path.append('../../scons/src/engine/')
+sys.path.append('/mnt/data/home/mdupont/experiments/scons-go-tools/')
+
+env = Environment(TOOLS=['default', 'go'])
+
+env.GoProgram('dist', env.Go('dist', [
+      'cmd/dist/build.go',
+      'cmd/dist/buildgo.go',    
+      'cmd/dist/buildruntime.go',
+      'cmd/dist/buildtool.go',
+      'cmd/dist/main.go',
+      'cmd/dist/sys_default.go',
+      'cmd/dist/util.go',
+      ]))
+
+
+env.GoProgram('build', env.Go('build', [
+                       'go/build/build.go',
+                       'go/build/doc.go',
+                       'go/build/read.go',
+                       'go/build/syslist.go',
+
+                       ]))
+
+                       #'go/build/read_test.go',
+                       #'go/build/build_test.go',
+                       #'go/build/deps_test.go',
+                       #'go/build/syslist_test.go',
+                       #'go/build/testdata/multi/file.go',
+                       #'go/build/testdata/multi/file_appengine.go',
+                       #'go/build/testdata/other/file/file.go',
+                       #'go/build/testdata/other/main.go'

@@ -485,9 +485,9 @@ func cansse2() bool {
 		return false
 	}
 
-	var info [4]uint32
-	cpuid(&info, 1)
-	return info[3]&(1<<26) != 0 // SSE2
+	//var info [4]uint32
+	//cpuid(&info, 1)
+	return true;//info[3]&(1<<26) != 0 // SSE2
 }
 
 func xgetgoarm() string {
