@@ -21,6 +21,32 @@ cmd/internal/obj.o: cmd/internal/obj/ar.go cmd/internal/obj/data.go cmd/internal
 cmd/internal/obj/x86.o : cmd/internal/obj.o  cmd/internal/obj/x86/6.out.go cmd/internal/obj/x86/anames6.go cmd/internal/obj/x86/asm6.go cmd/internal/obj/x86/list6.go cmd/internal/obj/x86/obj6.go cmd/internal/obj/x86/util.go 
 	$(GCCGO) -L . -I . -c -g -o $@ $^
 
+cmd/internal/obj/i386.o: cmd/internal/obj/i386/8.out.go  \
+	cmd/internal/obj/i386/list8.go \
+	cmd/internal/obj/i386/anames8.go \
+	cmd/internal/obj/i386/obj8.go \
+	cmd/internal/obj/i386/asm8.go  \
+	cmd/internal/obj/i386/util.go
+	$(GCCGO) -L . -I . -c -g -o $@ $^
+
+cmd/internal/obj/ppc64.o: \
+	cmd/internal/obj/ppc64/9.out.go \
+	cmd/internal/obj/ppc64/list9.go \
+	cmd/internal/obj/ppc64/anames9.go \
+	cmd/internal/obj/ppc64/obj9.go \
+	cmd/internal/obj/ppc64/asm9.go \
+	cmd/internal/obj/ppc64/util.go
+	$(GCCGO) -L . -I . -c -g -o $@ $^
+
+cmd/internal/obj/arm.o : cmd/internal/obj.o  \
+	cmd/internal/obj/arm/5.out.go \
+	cmd/internal/obj/arm/anames5.go \
+	cmd/internal/obj/arm/asm5.go \
+	cmd/internal/obj/arm/list5.go \
+	cmd/internal/obj/arm/obj5.go  \
+	cmd/internal/obj/arm/util.go
+	$(GCCGO) -L . -I . -c -g -o $@ $^
+
 
 #cmd/internal/obj/data.go:func Symgrow
 
@@ -37,31 +63,36 @@ asm6 :  cmd/asm/internal/arch.o \
 	cmd/internal/gc.o \
 	cmd/internal/obj.o \
 	cmd/internal/obj/x86.o  \
+	cmd/internal/obj/arm.o  \
+	cmd/internal/obj/i386.o  \
+	cmd/internal/obj/ppc64.o  \
 	text/scanner.o \
+	cmd/asm/main.go \
 	cmd/asm/main.go 
 	$(GCCGO) -I. -L. -g -o $@ $^ 
 
-#	 ./cmd/asm/internal/arch/arm.go \
-#	 ./cmd/asm/internal/arch/ppc64.go
-
-cmd/asm/internal/arch.o : ./cmd/asm/internal/arch/arch.go  cmd/internal/obj/x86.o
+cmd/asm/internal/arch.o : ./cmd/asm/internal/arch/arch.go  \
+	./cmd/asm/internal/arch/arm.go  \
+	./cmd/asm/internal/arch/ppc64.go  \
+	cmd/internal/obj/x86.o  \
+	cmd/internal/obj/arm.o  \
+	cmd/internal/obj/i386.o  \
+	cmd/internal/obj/ppc64.o 
 	$(GCCGO) -c -g -o $@ $^
 
 cmd/asm/internal/flags.o: ./cmd/asm/internal/flags/flags.go
 	$(GCCGO) -c -g -o $@ $^
 
-#unsafe.o : unsafe/unsafe.go
-#	$(GCCGO) -c -g -o $@ $^
-
-
-
-#	unsafe.o \
-
-lex6: cmd/6a/lex.go cmd/asm/internal/flags.o  \
+#cmd/6a/lex.go  : missing variables
+lex6:  cmd/6a/lex2.go \
+	cmd/asm/internal/flags.o  \
 	cmd/internal/obj.o      \
 	text/scanner.o          \
 	cmd/asm/internal/lex.o  \
 	cmd/internal/obj/x86.o  \
+	cmd/internal/obj/ppc64.o  \
+	cmd/internal/obj/i386.o  \
+	cmd/internal/obj/arm.o  \
 	cmd/asm/internal/arch.o \
 	cmd/internal/gc.o cmd/internal/asm.o
 	$(GCCGO) -L. -I. -g -o $@ $^ 
@@ -95,14 +126,15 @@ cmd/internal/asm.o: cmd/internal/obj.o cmd/internal/asm/asm2.go \
 	cmd/internal/asm/lexbody.go \
 	cmd/internal/asm/macbody.go
 
-#b	 ./cmd/internal/gc/mkbuiltin.go \
+cmd/internal/package.o:
+	 ./cmd/internal/gc/builtins/runtime.go \
+	 ./cmd/internal/gc/builtins/unsafe.go
+	$(GCCGO) -c -g -o $@ $^
 
 cmd/internal/gc.o:  ./cmd/internal/gc/align.go \
 	 ./cmd/internal/gc/array.go \
 	 ./cmd/internal/gc/bits.go \
 	 ./cmd/internal/gc/builtin.go \
-	 ./cmd/internal/gc/builtins/runtime.go \
-	 ./cmd/internal/gc/builtins/unsafe.go \
 	 ./cmd/internal/gc/bv.go \
 	 ./cmd/internal/gc/closure.go \
 	 ./cmd/internal/gc/const.go \
@@ -143,9 +175,10 @@ cmd/internal/gc.o:  ./cmd/internal/gc/align.go \
 	$(GCCGO) -c -g -o $@ $^
 
 
-bootstrap: lex6 galign6 asm6
+bootstrap: lex6 galign6 yacc6 asm6
 
-
+yacc6: cmd/yacc/yacc.go
+	$(GCCGO)  -g -o $@ $^
 
 # these are the main routins
 # cmd/6a/lex.go
