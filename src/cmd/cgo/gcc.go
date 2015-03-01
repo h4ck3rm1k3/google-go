@@ -727,6 +727,7 @@ func (p *Package) gccBaseCmd() []string {
 	if ret := strings.Fields(os.Getenv("GCC")); len(ret) > 0 {
 		return ret
 	}
+	const defaultCC = "gcc"
 	return strings.Fields(defaultCC)
 }
 

@@ -99,6 +99,7 @@ lex6:  cmd/6a/lex2.go \
 	cmd/internal/gc.o cmd/internal/asm.o
 	$(GCCGO) -L. -I. -g -o $@ $^ 
 
+# this one is broken
 lexorig:  cmd/6a/lex.go \
 	cmd/asm/internal/flags.o  \
 	cmd/internal/obj.o      \
@@ -191,13 +192,19 @@ cmd/internal/gc.o:  ./cmd/internal/gc/align.go \
 
 
 
+cgo : cmd/cgo/main.go \
+	cmd/cgo/ast.go \
+	cmd/cgo/doc.go \
+	cmd/cgo/gcc.go \
+	cmd/cgo/godefs.go \
+	cmd/cgo/out.go \
+	cmd/cgo/util.go 
+	$(GCCGO) -c -g -o $@ $^
 
 yacc6: cmd/yacc/yacc.go
 	$(GCCGO)  -g -o $@ $^
 
 # these are the main routins
-# cmd/6a/lex.go
-# cmd/6g/galign.go
 # cmd/addr2line/main.go
 # cmd/api/goapi.go
 # cmd/api/run.go
@@ -216,7 +223,6 @@ yacc6: cmd/yacc/yacc.go
 # cmd/pack/pack.go
 # cmd/pprof/pprof.go
 # cmd/trace/main.go
-# cmd/yacc/yacc.go
 # compress/flate/gen.go
 # crypto/md5/gen.go
 # crypto/tls/generate_cert.go
