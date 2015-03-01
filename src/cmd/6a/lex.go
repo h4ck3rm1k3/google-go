@@ -38,6 +38,8 @@ import (
 	"cmd/internal/obj/x86"
 )
 
+
+
 var (
 	yyerror  = asm.Yyerror
 	nullgen  obj.Addr
@@ -46,6 +48,8 @@ var (
 
 func main() {
 	cinit()
+
+	asm.Yyerror()
 
 	asm.LSCONST = LSCONST
 	asm.LCONST = LCONST

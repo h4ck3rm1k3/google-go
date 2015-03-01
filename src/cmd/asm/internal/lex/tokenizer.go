@@ -38,7 +38,7 @@ func NewTokenizer(name string, r io.Reader, file *os.File) *Tokenizer {
 		scanner.ScanStrings |
 		scanner.ScanComments
 	s.Position.Filename = name
-	s.IsIdentRune = isIdentRune
+	s.IsIdentRune = isIdentRune // from text/scanner/scanner.go: IsIdentRune 
 	if file != nil {
 		obj.Linklinehist(linkCtxt, histLine, name, 0)
 	}
