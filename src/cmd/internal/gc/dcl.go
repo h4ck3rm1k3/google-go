@@ -76,7 +76,7 @@ func popdcl() {
 		Fatal("popdcl: no mark")
 	}
 	dclstack = d.Link
-	block = d.Block
+	curblockno = d.Block
 }
 
 func poptodcl() {
@@ -92,10 +92,10 @@ func poptodcl() {
 func markdcl() {
 	d := push()
 	d.Name = "" // used as a mark in fifo
-	d.Block = block
+	d.Block = curblockno
 
 	blockgen++
-	block = blockgen
+	curblockno = blockgen
 }
 
 //	if(dflag())
@@ -214,7 +214,7 @@ func declare(n *Node, ctxt int) {
 		n.Xoffset = 0
 	}
 
-	if s.Block == block {
+	if s.Block == curblockno {
 		// functype will print errors about duplicate function arguments.
 		// Don't repeat the error here.
 		if ctxt != PPARAM && ctxt != PPARAMOUT {
@@ -222,7 +222,7 @@ func declare(n *Node, ctxt int) {
 		}
 	}
 
-	s.Block = block
+	s.Block = curblockno
 	s.Lastlineno = int32(parserline())
 	s.Def = n
 	n.Vargen = int32(gen)
@@ -492,7 +492,7 @@ func colasdefn(left *NodeList, defn *Node) {
 		}
 
 		n.Sym.Flags &^= SymUniq
-		if n.Sym.Block == block {
+		if n.Sym.Block == curblockno {
 			continue
 		}
 

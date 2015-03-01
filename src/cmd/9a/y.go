@@ -161,7 +161,6 @@ const yyEofCode = 1
 const yyErrCode = 2
 const yyMaxDepth = 200
 
-//line yacctab:1
 var yyExca = []int{
 	-1, 1,
 	1, -1,
@@ -500,7 +499,6 @@ var yyTok3 = []int{
 	0,
 }
 
-//line yaccpar:1
 
 /*	parser for yacc output	*/
 

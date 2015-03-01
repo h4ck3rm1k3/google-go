@@ -363,8 +363,8 @@ func compile(fn *Node) {
 		Deferproc = Sysfunc("deferproc")
 		Deferreturn = Sysfunc("deferreturn")
 		Panicindex = Sysfunc("panicindex")
-		panicslice = Sysfunc("panicslice")
-		throwreturn = Sysfunc("throwreturn")
+		ppanicslice = Sysfunc("panicslice")
+		vthrowreturn = Sysfunc("throwreturn")
 	}
 
 	lno := setlineno(fn)
@@ -506,7 +506,7 @@ func compile(fn *Node) {
 	}
 
 	if Curfn.Type.Outtuple != 0 {
-		Thearch.Ginscall(throwreturn, 0)
+		Thearch.Ginscall(vthrowreturn, 0)
 	}
 
 	Thearch.Ginit()

@@ -56,37 +56,27 @@ util6: cmd/6g/util.go
 
 
 # the boostrap contains :
-asm6 : ./cmd/asm/main.go
-	$(GCCGO) -c -g -o $@ $^
+asm6 : ./cmd/asm/main.go cmd/internal/obj.o cmd/asm/internal/arch.o cmd/asm/internal/flags.o
+	$(GCCGO) -I. -L. -g -o $@ $^ 
 
 #	 ./cmd/asm/internal/arch/arm.go \
 #	 ./cmd/asm/internal/arch/ppc64.go
 
-cmd/asm/internal/arch.o : ./cmd/asm/internal/arch/arch.go 
+cmd/asm/internal/arch.o : ./cmd/asm/internal/arch/arch.go  cmd/internal/obj/x86.o
 	$(GCCGO) -c -g -o $@ $^
 
 cmd/asm/internal/flags.o: ./cmd/asm/internal/flags/flags.go
 	$(GCCGO) -c -g -o $@ $^
 
-# main
-LEX_DEPS=cmd/asm/internal/flags.o  \
+lex6: cmd/6a/lex.go cmd/asm/internal/flags.o  \
 	cmd/internal/obj.o      \
 	text/scanner.o          \
 	cmd/asm/internal/lex.o  \
 	cmd/internal/obj/x86.o  \
 	cmd/asm/internal/arch.o \
-	cmd/internal/asm.o      
-
-
-
-lex6: cmd/6a/lex.go
-	$(GCCGO) -L. -I. -g -o $@ $^ $(LEX_DEPS)
-
-
-# cmd/asm/internal/flags.o text/scanner.o  cmd/internal/obj.o
-
-lex : $(LEX_DEPS) lex6
-	echo
+	cmd/internal/gc.o \
+	cmd/internal/asm.o  
+	$(GCCGO) -L. -I. -g -o $@ $^ 
 
 text/scanner.o : text/scanner/scanner.go
 	$(GCCGO) -c -g -o $@ $^  
@@ -95,12 +85,29 @@ cmd/asm/internal/lex.o: ./cmd/asm/internal/lex/input.go \
 	 ./cmd/asm/internal/lex/lex.go \
 	 ./cmd/asm/internal/lex/slice.go \
 	 ./cmd/asm/internal/lex/stack.go \
+	 ./cmd/asm/internal/lex/tokenizer.go \
+	text/scanner.o
+	$(GCCGO) -L. -I. -c -g -o $@ ./cmd/asm/internal/lex/input.go \
+	 ./cmd/asm/internal/lex/lex.go \
+	 ./cmd/asm/internal/lex/slice.go \
+	 ./cmd/asm/internal/lex/stack.go \
 	 ./cmd/asm/internal/lex/tokenizer.go
-	$(GCCGO) -L. -I. -c -g -o $@ $^ text/scanner.o
 
-cmd/internal/asm.o: cmd/asm/internal/asm/asm.go \
-		    cmd/asm/internal/asm/parse.go
-	$(GCCGO) -c -g -o $@ $^
+
+
+cmd/asm/internal/asm.o: cmd/asm/internal/lex.o cmd/asm/internal/flags.o cmd/asm/internal/asm/asm.go cmd/asm/internal/asm/parse.go cmd/asm/internal/lex.o cmd/asm/internal/arch.o
+	$(GCCGO)  -g -c -o $@ cmd/asm/internal/asm/asm.go cmd/asm/internal/asm/parse.go
+
+cmd/internal/asm.o: cmd/internal/obj.o cmd/internal/asm/asm2.go \
+	cmd/internal/asm/asm.go  \
+	cmd/internal/asm/lexbody.go \
+	cmd/internal/asm/macbody.go
+	$(GCCGO) -g -c -o $@ cmd/internal/asm/asm2.go \
+	cmd/internal/asm/asm.go  \
+	cmd/internal/asm/lexbody.go \
+	cmd/internal/asm/macbody.go
+
+#b	 ./cmd/internal/gc/mkbuiltin.go \
 
 cmd/internal/gc.o:  ./cmd/internal/gc/align.go \
 	 ./cmd/internal/gc/array.go \
@@ -123,7 +130,6 @@ cmd/internal/gc.o:  ./cmd/internal/gc/align.go \
 	 ./cmd/internal/gc/inl.go \
 	 ./cmd/internal/gc/lex.go \
 	 ./cmd/internal/gc/md5.go \
-	 ./cmd/internal/gc/mkbuiltin.go \
 	 ./cmd/internal/gc/mparith1.go \
 	 ./cmd/internal/gc/mparith2.go \
 	 ./cmd/internal/gc/mparith3.go \
@@ -149,7 +155,7 @@ cmd/internal/gc.o:  ./cmd/internal/gc/align.go \
 	$(GCCGO) -c -g -o $@ $^
 
 
-bootstrap: lex galign6 cgen6 galign6 gg6 ggen6 gsubr6 peep6 prog6 reg6 util6 asm6
+bootstrap: lex6 galign6 cgen6 galign6 gg6 ggen6 gsubr6 peep6 prog6 reg6 util6 asm6
 
 
 

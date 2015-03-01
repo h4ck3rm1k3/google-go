@@ -900,7 +900,7 @@ var stkptrsize int64 // prefix of stack containing pointers
 
 var blockgen int32 // max block number
 
-var block int32 // current block number
+var curblockno int32 // current block number (was block)
 
 var Hasdefer int // flag that curfn has defer statetment
 
@@ -1177,6 +1177,6 @@ var Deferreturn *Node
 
 var Panicindex *Node
 
-var panicslice *Node
+var ppanicslice *Node
 
-var throwreturn *Node
+var vthrowreturn *Node

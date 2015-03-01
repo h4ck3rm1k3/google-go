@@ -219,9 +219,9 @@ func mkvar(f *Flow, a *obj.Addr) Bits {
 		// TODO(rsc): Remove special case here.
 	case obj.TYPE_ADDR:
 		var bit Bits
-		if Thearch.Thechar == '9' || Thearch.Thechar == '5' {
-			goto memcase
-		}
+//		if Thearch.Thechar == '9' || Thearch.Thechar == '5' {
+	//		goto memcase
+//		}
 		a.Type = obj.TYPE_MEM
 		bit = mkvar(f, a)
 		setaddrs(bit)
@@ -229,8 +229,7 @@ func mkvar(f *Flow, a *obj.Addr) Bits {
 		Ostats.Naddr++
 		goto none
 
-	memcase:
-		fallthrough
+//	memcase: fallthrough
 
 	case obj.TYPE_MEM:
 		if r != R {

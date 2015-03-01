@@ -23,7 +23,7 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+// FITNESS FOR A PARTICULAR PURPOSE AoND NONINFRINGEMENT.  IN NO EVENT SHALL THE
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -40,19 +40,30 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-
 	"cmd/internal/obj"
-
 	"bytes"
-	"fmt"
-	//"os"
-	"strconv"
-	//"strings"
 	"unicode/utf8"
 
-	"cmd/internal/obj"
-
 )
+func Yyerror3() {}
+func Yyerror2(a string) {}
+func Yyerror(a string, args ...interface{}) {
+	/*
+	 * hack to intercept message from yaccpar
+	 */
+	if a == "syntax error" || len(args) == 1 && a == "%s" && args[0] == "syntax error" {
+		Yyerror("syntax error, last name: %s", last)
+		return
+	}
+
+	prfile(Lineno)
+	fmt.Printf("%s\n", fmt.Sprintf(a, args...))
+	nerrors++
+	if nerrors > 10 {
+		fmt.Printf("too many errors\n")
+		errorexit()
+	}
+}
 
 // Initialized by client.
 var (
@@ -970,23 +981,6 @@ pop:
 
 var last string
 
-func Yyerror(a string, args ...interface{}) {
-	/*
-	 * hack to intercept message from yaccpar
-	 */
-	if a == "syntax error" || len(args) == 1 && a == "%s" && args[0] == "syntax error" {
-		Yyerror("syntax error, last name: %s", last)
-		return
-	}
-
-	prfile(Lineno)
-	fmt.Printf("%s\n", fmt.Sprintf(a, args...))
-	nerrors++
-	if nerrors > 10 {
-		fmt.Printf("too many errors\n")
-		errorexit()
-	}
-}
 
 func prfile(l int32) {
 	obj.Linkprfile(Ctxt, int(l))

@@ -321,7 +321,7 @@ func Main() {
 			obj.Bungetrune(curio.bin)
 		}
 
-		block = 1
+		curblockno = 1
 		iota_ = -1000000
 
 		imported_unsafe = 0

@@ -36,6 +36,7 @@ import (
 	"cmd/internal/asm"
 	"cmd/internal/obj"
 	"cmd/internal/obj/x86"
+	"cmd/internal/gc"
 )
 
 
@@ -45,6 +46,40 @@ var (
 	nullgen  obj.Addr
 	stmtline int32
 )
+
+const LTYPE0 = 258
+const LTYPE1 = 259
+const LTYPE2 = 260
+const LTYPE3 = 261
+const LTYPE4 = 262
+const LTYPEC = 263
+const LTYPED = 264
+const LTYPEN = 265
+const LTYPER = 266
+const LTYPET = 267
+const LTYPES = 268
+const LTYPEM = 269
+const LTYPEI = 270
+const LTYPEG = 271
+const LTYPEXC = 272
+const LTYPEX = 273
+const LTYPEPC = 274
+const LTYPEF = 275
+const LCONST = 276
+const LFP = 277
+const LPC = 278
+const LSB = 279
+const LBREG = 280
+const LLREG = 281
+const LSREG = 282
+const LFREG = 283
+const LXREG = 284
+const LFCONST = 285
+const LSCONST = 286
+const LSP = 287
+const LNAME = 288
+const LLAB = 289
+const LVAR = 290
 
 func main() {
 	cinit()
@@ -91,6 +126,8 @@ func (yy) Error(msg string) {
 func yyparse() {
 	yyParse(yy{})
 }
+const LTYPERT = 57363
+const LMREG = 57373
 
 var lexinit = []asm.Lextab{
 	{"SP", LSP, obj.NAME_AUTO},

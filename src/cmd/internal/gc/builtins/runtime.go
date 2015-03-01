@@ -8,9 +8,12 @@
 
 // +build ignore
 
-package PACKAGE
+package gc
 
 // emitted by compiler, not referred to by go programs
+
+type any struct {
+};
 
 func newobject(typ *byte) *any
 func panicindex()
