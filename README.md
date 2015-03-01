@@ -2,11 +2,8 @@
 This is an attempt to be able to bootstrap go with gccgo and not have to use
 a running go program. 
 
-See go/src/SConstruct for the start of a scons
-see my patches for the scons go tools here : https://github.com/h4ck3rm1k3/scons-go-tools for the
-scons go tools.
-
-The dist tool builds, and I am working on the build command now.
+reworking it to use gnu make to build the core go.
+runing debian  gccgo-5 (5-20150226-1)
 
 Mike
 
