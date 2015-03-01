@@ -1,5 +1,7 @@
 GCCGO=gccgo-5
 
+bootstrap: lex6 galign6 yacc6 asm6 dist6
+
 clean :
 	find -name *.o -exec rm {} \;
 
@@ -9,7 +11,7 @@ normal:
 go/build.o: go/build.o go/build/build.go go/build/doc.go go/build/read.go go/build/syslist.go
 	$(GCCGO) -c -g -o $^
 
-dist.6: cmd/dist/build.go cmd/dist/buildgo.go cmd/dist/buildruntime.go cmd/dist/buildtool.go cmd/dist/main.go cmd/dist/sys_default.go cmd/dist/util.go
+dist6: cmd/dist/build.go cmd/dist/buildgo.go cmd/dist/buildruntime.go cmd/dist/buildtool.go cmd/dist/main.go cmd/dist/sys_default.go cmd/dist/util.go
 	$(GCCGO) -g -o dist.6 $^
 
 
@@ -85,6 +87,19 @@ cmd/asm/internal/flags.o: ./cmd/asm/internal/flags/flags.go
 
 #cmd/6a/lex.go  : missing variables
 lex6:  cmd/6a/lex2.go \
+	cmd/asm/internal/flags.o  \
+	cmd/internal/obj.o      \
+	text/scanner.o          \
+	cmd/asm/internal/lex.o  \
+	cmd/internal/obj/x86.o  \
+	cmd/internal/obj/ppc64.o  \
+	cmd/internal/obj/i386.o  \
+	cmd/internal/obj/arm.o  \
+	cmd/asm/internal/arch.o \
+	cmd/internal/gc.o cmd/internal/asm.o
+	$(GCCGO) -L. -I. -g -o $@ $^ 
+
+lexorig:  cmd/6a/lex.go \
 	cmd/asm/internal/flags.o  \
 	cmd/internal/obj.o      \
 	text/scanner.o          \
@@ -175,7 +190,7 @@ cmd/internal/gc.o:  ./cmd/internal/gc/align.go \
 	$(GCCGO) -c -g -o $@ $^
 
 
-bootstrap: lex6 galign6 yacc6 asm6
+
 
 yacc6: cmd/yacc/yacc.go
 	$(GCCGO)  -g -o $@ $^
