@@ -1,15 +1,15 @@
 GCCGO=gccgo-5
+normal:
+	bash ./all.bash 
 
 bootstrap: lex6 galign6 yacc6 asm6 dist6
 
 clean :
 	find -name *.o -exec rm {} \;
 
-normal:
-	bash ./all.bash 
 
-go/build.o: go/build.o go/build/build.go go/build/doc.go go/build/read.go go/build/syslist.go
-	$(GCCGO) -c -g -o $^
+go/build.o: go/build/build.go go/build/doc.go go/build/read.go go/build/syslist.go
+	$(GCCGO) -c -g -o go/build.o $^
 
 dist6: cmd/dist/build.go cmd/dist/buildgo.go cmd/dist/buildruntime.go cmd/dist/buildtool.go cmd/dist/main.go cmd/dist/sys_default.go cmd/dist/util.go
 	$(GCCGO) -g -o dist.6 $^
@@ -204,6 +204,11 @@ cgo : cmd/cgo/main.go \
 yacc6: cmd/yacc/yacc.go
 	$(GCCGO)  -g -o $@ $^
 
+#cmd/go/bootstrap.go
+#cmd/go/signal_notunix.go
+go6 : cmd/go/main.go  cmd/go/build.go cmd/go/clean.go cmd/go/context.go cmd/go/discovery.go cmd/go/doc.go cmd/go/env.go cmd/go/fix.go cmd/go/fmt.go cmd/go/generate.go cmd/go/get.go cmd/go/go11.go cmd/go/help.go cmd/go/http.go cmd/go/list.go cmd/go/pkg.go cmd/go/run.go cmd/go/signal.go  cmd/go/signal_unix.go cmd/go/testflag.go cmd/go/test.go cmd/go/testgo.go cmd/go/tool.go cmd/go/vcs.go cmd/go/version.go cmd/go/vet.go cmd/go/cc.go
+	$(GCCGO)  -g -o $@ $^
+
 # these are the main routins
 # cmd/addr2line/main.go
 # cmd/api/goapi.go
@@ -245,3 +250,15 @@ yacc6: cmd/yacc/yacc.go
 
 all :
 	GOROOT=/home/mdupon/experiments/go PYTHONPATH=../../scons/src/engine/ ../../scons/build/scons/build/scripts/scons 
+
+reflect.o : reflect/type.go reflect/value.go reflect/makefunc.go reflect/deepequal.go
+	$(GCCGO) -c -g -o $@ $^
+
+#reflect/asm_amd64p32.s
+#reflect/asm_ppc64x.s
+#reflect/asm_arm.s
+#reflect/all_test.go
+#reflect/example_test.go
+#reflect/set_test.go
+#reflect/asm_amd64.s
+#reflect/asm_386.s

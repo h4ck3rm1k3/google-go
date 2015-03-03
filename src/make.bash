@@ -117,14 +117,14 @@ if [ ! -x "$GOROOT_BOOTSTRAP/bin/go" ]; then
 	echo "ERROR: Cannot find $GOROOT_BOOTSTRAP/bin/go." >&2
 	echo "Set \$GOROOT_BOOTSTRAP to a working Go tree >= Go 1.4." >&2
 fi
-rm -f cmd/dist/dist
-GOROOT="$GOROOT_BOOTSTRAP" GOOS="" GOARCH="" "$GOROOT_BOOTSTRAP/bin/go" build -o cmd/dist/dist ./cmd/dist
+#rm -f dist.6
+#GOROOT="$GOROOT_BOOTSTRAP" GOOS="" GOARCH="" "$GOROOT_BOOTSTRAP/bin/go" build -o dist.6 ./cmd/dist
 
 # -e doesn't propagate out of eval, so check success by hand.
-eval $(./cmd/dist/dist env -p || echo FAIL=true)
-if [ "$FAIL" = true ]; then
-	exit 1
-fi
+#eval $(./dist.6 env -p || echo FAIL=true)
+#if [ "$FAIL" = true ]; then
+#	exit 1
+#fi
 
 echo
 
@@ -132,9 +132,9 @@ if [ "$1" = "--dist-tool" ]; then
 	# Stop after building dist tool.
 	mkdir -p "$GOTOOLDIR"
 	if [ "$2" != "" ]; then
-		cp cmd/dist/dist "$2"
+		cp dist.6 "$2"
 	fi
-	mv cmd/dist/dist "$GOTOOLDIR"/dist
+	cp dist.6 "$GOTOOLDIR"/dist
 	exit 0
 fi
 
@@ -143,15 +143,15 @@ if [ "$1" = "--no-clean" ]; then
 	buildall=""
 	shift
 fi
-./cmd/dist/dist bootstrap $buildall $GO_DISTFLAGS -v # builds go_bootstrap
+./dist.6 bootstrap $buildall $GO_DISTFLAGS -v # builds go_bootstrap
 # Delay move of dist tool to now, because bootstrap may clear tool directory.
-mv cmd/dist/dist "$GOTOOLDIR"/dist
+cp dist.6 "$GOTOOLDIR"/dist
 echo
 
 if [ "$GOHOSTARCH" != "$GOARCH" -o "$GOHOSTOS" != "$GOOS" ]; then
 	echo "##### Building packages and commands for host, $GOHOSTOS/$GOHOSTARCH."
 	# CC_FOR_TARGET is recorded as the default compiler for the go tool. When building for the host, however,
-	# use the host compiler, CC, from `cmd/dist/dist env` instead.
+	# use the host compiler, CC, from `dist.6 env` instead.
 	CC=$CC GOOS=$GOHOSTOS GOARCH=$GOHOSTARCH \
 		"$GOTOOLDIR"/go_bootstrap install -gcflags "$GO_GCFLAGS" -ldflags "$GO_LDFLAGS" -v std cmd
 	echo

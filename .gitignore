@@ -77,3 +77,11 @@ pkg/
 /src/test3.s
 /src/test5.go
 /test3.go
+/src/cgo
+/src/cmd/6a/#a.y#
+/src/cmd/6a/#lex.go#
+/src/cmd/6a/.#a.y
+/src/cmd/6a/.#lex.go
+/src/y.go
+/src/y.output
+/src/yacc6
