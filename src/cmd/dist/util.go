@@ -480,14 +480,16 @@ func xsamefile(f1, f2 string) bool {
 
 func cpuid(info *[4]uint32, ax uint32)
 
+
 func cansse2() bool {
 	if gohostarch != "386" && gohostarch != "amd64" {
 		return false
 	}
 
-	var info [4]uint32
-	cpuid(&info, 1)
-	return info[3]&(1<<26) != 0 // SSE2
+	//var info [4]uint32
+	//cpuid(&info, 1)
+	//return info[3]&(1<<26) != 0 // SSE2
+	return false
 }
 
 func xgetgoarm() string {

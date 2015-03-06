@@ -1,4 +1,24 @@
+#GCCGO=gccgo-4.9
 GCCGO=gccgo-5
+
+simple : go6
+	echo ok
+
+normalbootstrap :
+	# this needs you to put the source in ~/go1.4/src
+	# ln -s ~/experiments/go/src/ ~/go1.4/src
+	./cmd/dist/dist bootstrap -a -v=9999
+
+dist6: cmd/dist/build.go cmd/dist/buildgo.go cmd/dist/buildruntime.go cmd/dist/buildtool.go cmd/dist/main.go cmd/dist/sys_default.go cmd/dist/util.go cmd/dist/test.go
+	$(GCCGO) -g -o dist6 $^
+
+go/build.o: go/build/build.go go/build/doc.go go/build/read.go go/build/syslist.go
+	$(GCCGO) -c -g -o go/build.o $^
+
+go6 : cmd/go/main.go  cmd/go/build.go cmd/go/clean.go cmd/go/context.go cmd/go/discovery.go cmd/go/doc.go cmd/go/env.go cmd/go/fix.go cmd/go/fmt.go cmd/go/generate.go cmd/go/get.go cmd/go/go11.go cmd/go/help.go cmd/go/http.go cmd/go/list.go cmd/go/pkg.go cmd/go/run.go cmd/go/signal.go  cmd/go/signal_unix.go cmd/go/testflag.go cmd/go/test.go cmd/go/testgo.go cmd/go/tool.go cmd/go/vcs.go cmd/go/version.go cmd/go/vet.go cmd/go/cc.go \
+	go/build.o
+	$(GCCGO)  -g -o $@ cmd/go/main.go  cmd/go/build.go cmd/go/clean.go cmd/go/context.go cmd/go/discovery.go cmd/go/doc.go cmd/go/env.go cmd/go/fix.go cmd/go/fmt.go cmd/go/generate.go cmd/go/get.go cmd/go/go11.go cmd/go/help.go cmd/go/http.go cmd/go/list.go cmd/go/pkg.go cmd/go/run.go cmd/go/signal.go  cmd/go/signal_unix.go cmd/go/testflag.go cmd/go/test.go cmd/go/testgo.go cmd/go/tool.go cmd/go/vcs.go cmd/go/version.go cmd/go/vet.go cmd/go/cc.go
+
 normal:
 	bash ./all.bash 
 
@@ -8,11 +28,7 @@ clean :
 	find -name *.o -exec rm {} \;
 
 
-go/build.o: go/build/build.go go/build/doc.go go/build/read.go go/build/syslist.go
-	$(GCCGO) -c -g -o go/build.o $^
 
-dist6: cmd/dist/build.go cmd/dist/buildgo.go cmd/dist/buildruntime.go cmd/dist/buildtool.go cmd/dist/main.go cmd/dist/sys_default.go cmd/dist/util.go
-	$(GCCGO) -g -o dist.6 $^
 
 
 
@@ -206,8 +222,7 @@ yacc6: cmd/yacc/yacc.go
 
 #cmd/go/bootstrap.go
 #cmd/go/signal_notunix.go
-go6 : cmd/go/main.go  cmd/go/build.go cmd/go/clean.go cmd/go/context.go cmd/go/discovery.go cmd/go/doc.go cmd/go/env.go cmd/go/fix.go cmd/go/fmt.go cmd/go/generate.go cmd/go/get.go cmd/go/go11.go cmd/go/help.go cmd/go/http.go cmd/go/list.go cmd/go/pkg.go cmd/go/run.go cmd/go/signal.go  cmd/go/signal_unix.go cmd/go/testflag.go cmd/go/test.go cmd/go/testgo.go cmd/go/tool.go cmd/go/vcs.go cmd/go/version.go cmd/go/vet.go cmd/go/cc.go
-	$(GCCGO)  -g -o $@ $^
+
 
 # these are the main routins
 # cmd/addr2line/main.go
