@@ -112,12 +112,14 @@ import (
 // to a freshly allocated value and then mapping the element to that value.
 //
 func Unmarshal(data []byte, v interface{}) error {
+	fmt.Printf("xml:Unmarshal\n",)
 	return NewDecoder(bytes.NewReader(data)).Decode(v)
 }
 
 // Decode works like xml.Unmarshal, except it reads the decoder
 // stream to find the start element.
 func (d *Decoder) Decode(v interface{}) error {
+	fmt.Printf("xml:Decode\n")
 	return d.DecodeElement(v, nil)
 }
 
@@ -126,10 +128,12 @@ func (d *Decoder) Decode(v interface{}) error {
 // It is useful when a client reads some raw XML tokens itself
 // but also wants to defer to Unmarshal for some elements.
 func (d *Decoder) DecodeElement(v interface{}, start *StartElement) error {
+	fmt.Printf("xml:DecodeElement\n")
 	val := reflect.ValueOf(v)
 	if val.Kind() != reflect.Ptr {
 		return errors.New("non-pointer passed to Unmarshal")
 	}
+	fmt.Printf("xml:DecodeElement going to unmarshal\n")
 	return d.unmarshal(val.Elem(), start)
 }
 
@@ -270,6 +274,8 @@ var (
 
 // Unmarshal a single XML element into val.
 func (p *Decoder) unmarshal(val reflect.Value, start *StartElement) error {
+	fmt.Printf("xml:unmarshal %v\n", start)
+
 	// Find start element if we need it.
 	if start == nil {
 		for {
@@ -283,6 +289,7 @@ func (p *Decoder) unmarshal(val reflect.Value, start *StartElement) error {
 			}
 		}
 	}
+	fmt.Printf("xml:unmarshal1 %v\n", start)
 
 	// Load value from interface, but only if the result will be
 	// usefully addressable.
@@ -338,6 +345,9 @@ func (p *Decoder) unmarshal(val reflect.Value, start *StartElement) error {
 		err          error
 	)
 
+
+	fmt.Printf("xml:unmarshal val %v %s\n", val, val.Kind())
+
 	switch v := val; v.Kind() {
 	default:
 		return errors.New("unknown type " + v.Type().String())
@@ -382,13 +392,19 @@ func (p *Decoder) unmarshal(val reflect.Value, start *StartElement) error {
 
 	case reflect.Struct:
 		typ := v.Type()
+
+		fmt.Printf("type:%v %v\n", typ, start.Name)
+
 		if typ == nameType {
 			v.Set(reflect.ValueOf(start.Name))
 			break
 		}
 
 		sv = v
+		fmt.Printf("type: %v\n",typ)
 		tinfo, err = getTypeInfo(typ)
+
+		fmt.Printf("typeinfo:%v\n", tinfo)
 		if err != nil {
 			return err
 		}
@@ -396,6 +412,9 @@ func (p *Decoder) unmarshal(val reflect.Value, start *StartElement) error {
 		// Validate and assign element name.
 		if tinfo.xmlname != nil {
 			finfo := tinfo.xmlname
+
+			fmt.Printf("typeinfo2:%v\n", finfo)
+
 			if finfo.name != "" && finfo.name != start.Name.Local {
 				return UnmarshalError("expected element type <" + finfo.name + "> but have <" + start.Name.Local + ">")
 			}
@@ -416,8 +435,15 @@ func (p *Decoder) unmarshal(val reflect.Value, start *StartElement) error {
 
 		// Assign attributes.
 		// Also, determine whether we need to save character data or comments.
+		//for n, a := range start.Attr {
+		//fmt.Printf("attr:%v %v\n", n, a)
+		//}
+
 		for i := range tinfo.fields {
 			finfo := &tinfo.fields[i]
+
+			//fmt.Printf("finfo:%v\n", finfo)
+
 			switch finfo.flags & fMode {
 			case fAttr:
 				strv := finfo.value(sv)
@@ -428,6 +454,9 @@ func (p *Decoder) unmarshal(val reflect.Value, start *StartElement) error {
 							return err
 						}
 						break
+					} else {
+						fmt.Errorf("xml:skip field %s %s", a.Name.Local, finfo.name)
+
 					}
 				}
 
@@ -472,8 +501,11 @@ Loop:
 		if err != nil {
 			return err
 		}
+
+
 		switch t := tok.(type) {
 		case StartElement:
+			fmt.Printf("next tok:%v\n", tok)
 			consumed := false
 			if sv.IsValid() {
 				consumed, err = p.unmarshalPath(tinfo, sv, nil, &t)
@@ -610,19 +642,32 @@ func copyValue(dst reflect.Value, src []byte) (err error) {
 // from the Decoder until start's matching end element, or if it's
 // still untouched because start is uninteresting for sv's fields.
 func (p *Decoder) unmarshalPath(tinfo *typeInfo, sv reflect.Value, parents []string, start *StartElement) (consumed bool, err error) {
+	fmt.Printf("unmarshalPath tinfo %v\n",*tinfo)
+	fmt.Printf("unmarshalPath sv %v\n",sv)
 	recurse := false
+	fmt.Printf("check fields %v\n",tinfo.fields)
+
 Loop:
+
 	for i := range tinfo.fields {
 		finfo := &tinfo.fields[i]
+
+		fmt.Printf("check field %v\n",finfo)
+
 		if finfo.flags&fElement == 0 || len(finfo.parents) < len(parents) || finfo.xmlns != "" && finfo.xmlns != start.Name.Space {
+
+			fmt.Printf("skip field1\n")
+
 			continue
 		}
 		for j := range parents {
 			if parents[j] != finfo.parents[j] {
+				fmt.Printf("skip field2\n")
 				continue Loop
 			}
 		}
 		if len(finfo.parents) == len(parents) && finfo.name == start.Name.Local {
+			fmt.Printf("perfect match\n")
 			// It's a perfect match, unmarshal the field.
 			return true, p.unmarshal(finfo.value(sv), start)
 		}
@@ -630,6 +675,7 @@ Loop:
 			// It's a prefix for the field. Break and recurse
 			// since it's not ok for one field path to be itself
 			// the prefix for another field path.
+			fmt.Printf("recurse true\n")
 			recurse = true
 
 			// We can reuse the same slice as long as we
@@ -637,8 +683,11 @@ Loop:
 			parents = finfo.parents[:len(parents)+1]
 			break
 		}
+		
+		fmt.Printf("xml:unmatched %v\n",start.Name.Local)
 	}
 	if !recurse {
+		fmt.Printf("xml:no recurse  %v\t%v\t%v\n",start.Name.Local, tinfo, sv)
 		// We have no business with this element.
 		return false, nil
 	}
@@ -653,6 +702,9 @@ Loop:
 		}
 		switch t := tok.(type) {
 		case StartElement:
+
+			fmt.Printf("TOken %v\n",tok)
+
 			consumed2, err := p.unmarshalPath(tinfo, sv, parents, &t)
 			if err != nil {
 				return true, err

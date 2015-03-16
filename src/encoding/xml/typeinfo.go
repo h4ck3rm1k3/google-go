@@ -60,7 +60,19 @@ func getTypeInfo(typ reflect.Type) (*typeInfo, error) {
 		n := typ.NumField()
 		for i := 0; i < n; i++ {
 			f := typ.Field(i)
-			if f.PkgPath != "" || f.Tag.Get("xml") == "-" {
+			if f.PkgPath != "" {
+				fmt.Printf("PATH NOT EMPTY\n", f)
+				fmt.Printf("getTypeInfo Skip: %v\n", f)
+				fmt.Printf("PkgPath Skip: %v\n", f.PkgPath)
+				fmt.Printf("Tag Skip :%v\n", f.Tag)
+				//continue // Private field
+			}
+
+			if f.Tag.Get("xml") == "-" {
+				fmt.Printf("SKIP\n", f)
+				fmt.Printf("getTypeInfo Skip: %v\n", f)
+				fmt.Printf("PkgPath Skip: %v\n", f.PkgPath)
+				fmt.Printf("Tag Skip :%v\n", f.Tag)
 				continue // Private field
 			}
 
@@ -224,6 +236,11 @@ func structFieldInfo(typ reflect.Type, f *reflect.StructField) (*fieldInfo, erro
 	if finfo.flags&fElement != 0 {
 		ftyp := f.Type
 		xmlname := lookupXMLName(ftyp)
+
+		if xmlname != nil {
+			fmt.Errorf("xml2: umatched tag in field %s", xmlname.name)
+		}
+
 		if xmlname != nil && xmlname.name != finfo.name {
 			return nil, fmt.Errorf("xml: name %q in tag of %s.%s conflicts with name %q in %s.XMLName",
 				finfo.name, typ, f.Name, xmlname.name, ftyp)
@@ -236,6 +253,10 @@ func structFieldInfo(typ reflect.Type, f *reflect.StructField) (*fieldInfo, erro
 // in case it exists and has a valid xml field tag, otherwise
 // it returns nil.
 func lookupXMLName(typ reflect.Type) (xmlname *fieldInfo) {
+	if xmlname != nil {
+		fmt.Errorf("xml: check field1 %v", xmlname.name)
+	}
+
 	for typ.Kind() == reflect.Ptr {
 		typ = typ.Elem()
 	}
@@ -254,6 +275,10 @@ func lookupXMLName(typ reflect.Type) (xmlname *fieldInfo) {
 		// Also consider errors as a non-existent field tag
 		// and let getTypeInfo itself report the error.
 		break
+	}
+
+	if xmlname != nil {
+		fmt.Errorf("xml: umatched tag in field %v", xmlname.name)
 	}
 	return nil
 }
