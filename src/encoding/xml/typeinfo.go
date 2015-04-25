@@ -61,18 +61,18 @@ func getTypeInfo(typ reflect.Type) (*typeInfo, error) {
 		for i := 0; i < n; i++ {
 			f := typ.Field(i)
 			if f.PkgPath != "" {
-				fmt.Printf("PATH NOT EMPTY\n", f)
-				fmt.Printf("getTypeInfo Skip: %v\n", f)
-				fmt.Printf("PkgPath Skip: %v\n", f.PkgPath)
-				fmt.Printf("Tag Skip :%v\n", f.Tag)
+				//fmt.Printf("encoding/xml/typeinfo/PATH NOT EMPTY\n")
+				//fmt.Printf("getTypeInfo Skip: %v\n", f)
+				//fmt.Printf("PkgPath Skip: %v\n", f.PkgPath)
+				//fmt.Printf("Tag Skip :%v\n", f.Tag)
 				//continue // Private field
 			}
 
 			if f.Tag.Get("xml") == "-" {
-				fmt.Printf("SKIP\n", f)
-				fmt.Printf("getTypeInfo Skip: %v\n", f)
-				fmt.Printf("PkgPath Skip: %v\n", f.PkgPath)
-				fmt.Printf("Tag Skip :%v\n", f.Tag)
+				//fmt.Printf("encoding/xml/typeinfoSKIP\n")
+				//fmt.Printf("getTypeInfo Skip: %v\n", f)
+				//fmt.Printf("PkgPath Skip: %v\n", f.PkgPath)
+				//fmt.Printf("encoding/xml/typeinfo Tag Skip :%v\n", f.Name)
 				continue // Private field
 			}
 
